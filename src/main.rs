@@ -2,9 +2,10 @@ mod support;
 mod ui;
 mod game;
 mod settings;
+mod componets;
 
 use glium::glutin::surface::WindowSurface;
-use glium::{winit, Display, Surface};
+use glium::{Display, Surface};
 use imgui::Context;
 use imgui_glium_renderer::Renderer;
 use imgui_winit_support::winit::dpi::LogicalSize;
@@ -17,7 +18,8 @@ use std::time::Instant;
 use support::{DPI, FONT_SIZE, clipboard, create_context};
 use ui::main_ui;
 use game::{Game, Tab};
-use settings::Settings;
+use settings::{Settings, Screen};
+use componets::*;
 
 const TITLE: &'static str = file!();
 
@@ -96,10 +98,10 @@ fn main() {
                 game_state.width = width as f32;
                 game_state.height = height as f32;
 
-                if game_state.config.fullscreen {
-                    window.set_fullscreen(Some(winit::window::Fullscreen::Borderless(None)));
-                } else {
-                   window.set_fullscreen(None); 
+                match game_state.config.fullscreen {
+                    Screen::Windowed => window.set_fullscreen(None),
+                    Screen::Fullscreen => window.set_fullscreen(Some(glium::winit::window::Fullscreen::Exclusive(window_target.primary_monitor().unwrap().video_modes().next().unwrap()))),
+                    Screen::Borderless => window.set_fullscreen(Some(glium::winit::window::Fullscreen::Borderless(None))),
                 }
 
                 main_ui(ui, &mut game_state);

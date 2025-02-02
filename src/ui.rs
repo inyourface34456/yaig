@@ -1,5 +1,5 @@
 use imgui::{Ui, Condition};
-use crate::{Game, Tab};
+use crate::{componets::tooltip, Game, Tab};
 
 pub fn main_ui(ui: &mut Ui, mut game_state: &mut Game) {
     ui.window("Hello world")
@@ -27,14 +27,32 @@ pub fn main_ui(ui: &mut Ui, mut game_state: &mut Game) {
 }
 
 fn main_game(ui: &Ui, game: &mut Game) {
+    // if ui.button("Show modal") {
+    //     ui.open_popup("modal");
+    // }
+    // if let Some(_token) = ui.begin_modal_popup("modal") {
+    //     ui.text("Content of my modal");
+    //     if ui.button("OK") {
+    //         ui.close_current_popup();
+    //     }
+    // };
+
     ui.text(format!("{}", game.count));
 
     if ui.button("incrmentm count") {
         game.count += 1;
-    }
-    ui.text("tab1");
+    } 
 }
 
 fn setting(ui: &Ui, game: &mut Game) {
-    ui.checkbox("Fullscreen", &mut game.config.fullscreen);
+    // ui.checkbox("Fullscreen", &mut game.config.fullscreen);
+    ui.text("Fullscreen Mode:");
+    ui.radio_button("Windowed", &mut game.config.fullscreen, crate::settings::Screen::Windowed);
+    tooltip(&ui, || {ui.text("Standered Window");});
+
+    ui.radio_button("Borderless", &mut game.config.fullscreen, crate::settings::Screen::Borderless);
+    tooltip(&ui, || {ui.text("Sandered Ftullscreen");});
+    
+    ui.radio_button("Exclusive", &mut game.config.fullscreen, crate::settings::Screen::Fullscreen);
+    tooltip(&ui, || {ui.text("Fullscreen, but this is the ONLY thing allowed on this moniter.");});
 }
